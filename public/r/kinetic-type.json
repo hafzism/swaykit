@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kinetic-type",
+  "type": "registry:component",
+  "title": "Kinetic Type",
+  "description": "A configurable GSAP character reveal.",
+  "dependencies": [
+    "gsap",
+    "@gsap/react"
+  ],
+  "files": [
+    {
+      "path": "kinetic-type.tsx",
+      "type": "registry:component",
+      "target": "components/swaykit/KineticType.tsx",
+      "content": "\"use client\";\nimport { useRef } from \"react\";\nimport gsap from \"gsap\";\nimport { useGSAP } from \"@gsap/react\";\n\nexport type KineticTypeProps = {\n  text?: string;\n  size?: number;\n  duration?: number;\n  stagger?: number;\n  distance?: number;\n  font?: \"sans\" | \"serif\" | \"mono\";\n  outline?: boolean;\n  replayKey?: number;\n  paused?: boolean;\n};\nexport default function KineticType({\n  text = \"Make it move.\",\n  size = 96,\n  duration = 1,\n  stagger = 0.06,\n  distance = 110,\n  font = \"sans\",\n  outline = false,\n  replayKey = 0,\n  paused = false,\n}: KineticTypeProps) {\n  const root = useRef<HTMLDivElement>(null);\n  useGSAP(\n    () => {\n      const media = gsap.matchMedia();\n      media.add(\"(prefers-reduced-motion: no-preference)\", () => {\n        if (paused) return;\n        const tween = gsap.fromTo(\n          \".kinetic-letter\",\n          { yPercent: distance, rotate: 6, opacity: 0 },\n          {\n            yPercent: 0,\n            rotate: 0,\n            opacity: 1,\n            duration,\n            stagger,\n            ease: \"expo.out\",\n            paused,\n          },\n        );\n        return () => {\n          tween.kill();\n        };\n      });\n      return () => media.revert();\n    },\n    {\n      scope: root,\n      dependencies: [text, duration, stagger, distance, replayKey, paused],\n      revertOnUpdate: true,\n    },\n  );\n  return (\n    <div\n      ref={root}\n      role=\"img\"\n      aria-label={text || \"Empty text\"}\n      style={{\n        containerType: \"inline-size\",\n        width: \"100%\",\n        fontFamily:\n          font === \"serif\"\n            ? \"Georgia, serif\"\n            : font === \"mono\"\n              ? \"monospace\"\n              : \"inherit\",\n        fontWeight: font === \"serif\" ? 400 : 650,\n        lineHeight: 1.1,\n        maxWidth: \"100%\",\n        textAlign: \"center\",\n      }}\n    >\n      <div\n        aria-hidden=\"true\"\n        style={{\n          fontSize: `clamp(24px, 16cqw, ${size}px)`,\n          letterSpacing: \"-0.065em\",\n          display: \"flex\",\n          flexWrap: \"wrap\",\n          justifyContent: \"center\",\n          columnGap: \"0.28em\",\n        }}\n      >\n        {text.split(\" \").map((word, wi) => (\n          <span\n            key={wi}\n            style={{\n              display: \"inline-flex\",\n              overflow: \"hidden\",\n              paddingBottom: \"0.12em\",\n              maxWidth: \"100%\",\n              flexWrap: \"wrap\",\n              justifyContent: \"center\",\n            }}\n          >\n            {Array.from(word).map((char, ci) => (\n              <span\n                className=\"kinetic-letter\"\n                key={ci}\n                style={{\n                  display: \"inline-block\",\n                  ...(outline\n                    ? {\n                        WebkitTextStroke: \"1px currentColor\",\n                        WebkitTextFillColor: \"transparent\",\n                      }\n                    : {}),\n                }}\n              >\n                {char}\n              </span>\n            ))}\n          </span>\n        ))}\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+}
