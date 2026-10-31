@@ -1,87 +1,71 @@
 # SwayKit
 
-A monochrome, motion-led React component library with a working Kinetic Type playground.
+**Components with character. Made to be explored.**
 
-## Run locally
+SwayKit is an evolving collection of expressive React components and interactive experiments. Explore an idea, make it your own, and take the code with you.
 
-Requires Node.js 20.9 or newer.
+> **Work in progress** — SwayKit is still taking shape. The first component and playground are available now; more components, interactions, and refinements are on the way. No release date is set yet.
 
-```sh
-npm install
+## What's here
+
+- **Kinetic Type** — a customizable character-reveal component with presets, live controls, and responsive sizing.
+- **Playground** — adjust the component, switch preview themes and device sizes, and replay the animation.
+- **Ready to use** — copy the source, usage code, or an AI prompt containing the component and your chosen settings. A shadcn-compatible registry item is also available.
+- **Interactive experiments** — five homepage concepts exploring motion, physics, 3D, and touch interaction. These are design studies, not registry components.
+
+Playground saves stay in your browser; share links carry settings in the URL. The project does not require an AI API key or a database.
+
+## Getting started
+
+You'll need Node.js 20.9 or newer and npm.
+
+```bash
+npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. The site includes a homepage, searchable catalog, component playground, and getting-started documentation.
+Open [localhost:3000](http://localhost:3000).
 
-## Verify and build
+To check and build the project:
 
-```sh
+```bash
 npm run typecheck
 npm run verify
 npm run build
 ```
 
-The build exports the entire site to `out/`. There are no runtime functions, database, authentication service, or AI API calls. Fonts are bundled locally. Preview configuration, local saves, share links, and prompt generation run in the browser.
+The build generates the registry assets and exports the site to `out/`. Fonts and production artwork are stored locally. The site runs as static files without a server, database, or runtime API keys.
 
 ## Deploy to Vercel
 
-Import this repository into Vercel using its Next.js preset. Build command: `npm run build`. The static export is handled by Next.js. The registry install command automatically uses the visited domain after deployment. For another static host, publish `out/`.
+SwayKit is set up for Vercel's Next.js integration. The Hobby plan can be used for eligible personal projects; see [Vercel's Hobby plan](https://vercel.com/docs/plans/hobby) for its current terms and limits.
 
-Vercel Hobby is intended for personal, non-commercial projects and is subject to usage limits: https://vercel.com/docs/plans/hobby.
+1. Create an empty repository on GitHub, GitLab, or Bitbucket, and push this project to it. If using GitHub, create the repository without an initial README or license, then run the commands GitHub provides to add the remote and push your existing branch.
+2. Sign in to [Vercel](https://vercel.com/), choose **Add New → Project**, and import the repository.
+3. Keep the project root as `./` and the framework preset as **Next.js**. Vercel should detect the build settings; the build command is `npm run build`. Leave the output directory at its detected default.
+4. No environment variables are required for the current site. Select **Deploy**.
+5. Once the build finishes, open the provided `vercel.app` URL. Future pushes to the configured production branch trigger new production deployments; other branches can receive preview deployments.
 
-## Demo component
+If a build fails, open its build logs in Vercel and check the root directory and build command. For another static host, publish the generated `out/` directory. See [Vercel's Git deployment guide](https://vercel.com/docs/git) for more details.
 
-`src/registry/kinetic-type.tsx` is the standalone source used by the actual preview, code exports, and generated registry. It requires `gsap` and `@gsap/react` only. It uses inline styles, inherits the consuming project's font and text colour, and scales the font down for narrow containers using container query units; `size` is the maximum font size.
+## Built with
 
-The playground supports text, font, maximum font size, animation duration, character delay, reveal distance, outline, four presets, replay, device viewports, preview themes, fullscreen, local saving, and share links. Usage and AI prompt exports reflect the current settings. The AI prompt includes the complete source.
+Next.js, React, TypeScript, GSAP, Three.js, and Rapier. Each future component can use the tools suited to its interaction; dependencies for a portable component should be included in its registry entry and code instructions.
 
-Save is local to the current browser. Share links contain configuration in their URL. Preview device widths are capped by the available stage width on smaller screens; fullscreen provides more space.
+## Project map
 
-## Project structure
+```text
+src/app/          Pages, layout, and global styles
+src/components/   Homepage, playground, and interactive scenes
+src/lib/          Component configuration and scene logic
+src/registry/     Portable component source
+public/r/         Generated registry items
+scripts/          Registry generation and verification
+docs/             Design research and image references
+```
 
-- `src/app/`: static routes and global styles.
-- `src/components/Home.tsx`: homepage GSAP timelines and ScrollTrigger choreography.
-- `src/components/Playground.tsx`: controls, source/code/prompt exports, saving, and sharing.
-- `src/components/Preview.tsx`: isolated iframe preview with same-origin message validation.
-- `src/lib/catalog.ts`: component metadata, defaults, presets, configuration parsing, and usage generation.
-- `src/registry/`: portable component source.
-- `scripts/build-registry.mjs`: generates registry and copyable source assets from that source.
-- `public/r/kinetic-type.json`: generated shadcn registry item.
+Kinetic Type's canonical source is `src/registry/kinetic-type.tsx`; the build generates the copyable source and registry item from it. See [design research](docs/design-research.md) and [image references](docs/image-prompts.md) for the thinking and assets behind the experiments.
 
-Choose the engine per component: CSS/SVG for simpler effects, Motion or GSAP for animation, and Three.js or shaders when a component needs them. Add only the dependencies actually used and include them in that component’s registry and code exports.
+## What's next
 
-When adding another component, add its portable source, metadata, defaults, controls, presets, static component route, preview renderer, and registry entry. The first release implements these for Kinetic Type; a multi-component control-schema abstraction can follow as the second component establishes what needs to be shared.
-
-## Design research
-
-See [docs/design-research.md](docs/design-research.md) for references, observations, and implementation decisions.
-
-## Hero concepts
-
-The homepage stacks five design directions. The first two are Chrome Study (drag to rotate with damped inertia) and Kinetic Matter (Rapier rigid-body collisions and force-based dragging). `src/components/HeroExperiments.tsx` handles their visibility, loading states, and scene lifecycle; `src/lib/hero-scene.ts` contains their Three.js rendering and physics runtime. The second scene loads Rapier on demand. All concepts render entirely in the browser and export as static pages for Vercel.
-
-Drag the sculpture or pieces with a pointer. When the canvas has focus, arrow keys turn the sculpture or scatter the pieces; space scatters the physics scene. Reduced-motion preferences stop automatic movement. A CSS artwork fallback remains if WebGL cannot start.
-
-## Little World (third hero)
-
-The third hero combines original 3D-rendered collectible character artwork with live Three.js extruded lettering, lighting, ground shadows, parallax, and draggable spring movement. The characters are rendered sprites placed at different depths, rather than rigged 3D character models; the lettering, floor, and floating ornaments are real geometry. Dragging, releasing, and keyboard jumps remain interactive. Arrow keys choose a character, Enter makes it jump, and Space makes everyone jump.
-
-The scene and its 2.1 MB atlas load when the section becomes visible. Hidden scenes stop rendering; reduced motion stops idle animation. `src/lib/spring-motion.ts` integrates movement in small substeps, with checks for settling, consistency at 30/60/120 fps, and bounded drag velocity.
-
-Selected artwork: `public/art/toy-world.png`. Generation prompts and the original ink study are documented in `docs/image-prompts.md`. The bundled Helvetiker font is from the Three.js examples; its license is retained at `public/art/font-license.txt`. All production assets remain local, with no runtime image-generation service or external texture request.
-
-## Orbital Observatory (fourth hero)
-
-The fourth concept is a fully procedural 3D universe. Its core has a custom animated accretion shader, a dark sphere and photon ring. Eight distinct orbital objects surround it, alongside an instanced asteroid belt, a depth-layered star field, orbital paths, selection halos, and restrained bloom. Crater textures, labels, materials, and lighting are generated locally; this scene downloads no image or model assets.
-
-Drag to rotate with inertia. Tap an object or use Discover to select it. Tap the core, press Space, or use Scatter to send the orbitals outward; damped springs return them to their paths. Arrow keys turn the view, Enter cycles objects, +/− changes zoom, and Escape or Reset restores the view. `src/lib/orbital-scene.ts` contains rendering and interaction, `src/lib/orbital-data.ts` holds the nine selectable object names, and `src/components/OrbitalObservatory.tsx` manages the controls and scene lifecycle.
-
-The scene loads when visible, stops drawing offscreen or when the tab is hidden, compiles scene shaders asynchronously, caps pixel density, and limits continuous rendering to 30 fps (24 on smaller canvases). Reduced motion stops automatic orbit and star animation while preserving direct interaction. GPU objects, textures, environment maps, and postprocessing targets are disposed on unmount.
-
-## FORM / 05 (fifth hero)
-
-A fully modeled tactile instrument at `/#form-instrument`. Its 768 instanced metal caps sit on individual pistons above a recessed bed. Brushing lifts and tilts nearby pins; holding and dragging depresses the surface. A coupled spring lattice propagates pressure to neighbouring actuators and dissipates energy after release. A knurled frequency dial, height fader, three mechanically depressed mode keys, impulse button, and latching hold switch all change the same surface. The embedded display plots its actual cross-section.
-
-Touch input uses a dedicated region fitted to the projected object: hold/drag works in both directions, while the surrounding stage and gutters retain page scrolling. Only one active contact is captured; cancellation, lost capture, blur, and leaving the viewport release it. Mobile has a Controls panel with native range inputs and at least 44px buttons as an alternative to small physical parts. Keyboard: 1/2/3 select Wave/Ripple/Saddle, arrows adjust height/frequency, Space sends an impulse, H holds, R resets.
-
-`src/lib/form-dynamics.ts` contains the coupled simulation, `src/lib/form-scene.ts` builds the geometry and input behaviour, and `src/components/FormInstrument.tsx` manages lazy loading and accessible controls. All graphics and textures are generated locally. Rendering pauses offscreen, respects reduced motion, and lowers pixel density on slower devices. Verification covers pressure propagation, settling, bounded repeated impulses, and reset. This remains a homepage concept, separate from the Kinetic Type component registry.
+More components, playground controls, and interaction ideas will arrive as the collection grows. SwayKit is being actively developed, so its design and APIs may change.
